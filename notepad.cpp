@@ -5,6 +5,7 @@ Notepad::Notepad()
     , fileMenu(new QMenu("File", this))
     , openAction(new QAction("Open", this))
     , saveAction(new QAction("Save", this))
+    , file(new (QFile))
     {
         textEdit = new QTextEdit(this);
         setCentralWidget(textEdit);
@@ -21,21 +22,22 @@ Notepad::Notepad()
     void Notepad::save()
     {
         QString fileName = QFileDialog::getSaveFileName(this, "Save Text File", "", "Text Files (*.txt);;All Files (*)");
-        QFile file(fileName);
-        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            QTextStream out(&file);
+        file->setFileName(fileName);
+        if (file->open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QTextStream out(file);
             out << textEdit->toPlainText();
-            file.close();
+            file->close();
         }
     }
 
 void Notepad::open() 
     {
         QString fileName = QFileDialog::getOpenFileName(this, "Open Text File", "", "Text Files (*.txt);;All Files (*)");
-        QFile file(fileName);
-        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            QTextStream in(&file);
-            textEdit->setText(in.readAll());
-            file.close();
+        if(fileName != "" || file->fileName() != fileName) {
+            file->setFileName(fileName);
+            if(file->open(QIODevice::ReadOnly | QIODevice::Text)) {
+                QTextStream in(file);
+                textEdit->setText(in.readAll());
+            }
         } 
     }

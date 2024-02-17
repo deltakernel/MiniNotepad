@@ -17,6 +17,7 @@ private slots:
 
 private:
     QTextEdit *textEdit;
+    QFile     *file;
 
     QMenuBar *menuBar;
     QMenu *fileMenu;
