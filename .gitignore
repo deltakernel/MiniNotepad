@@ -3,6 +3,7 @@
 build
 CMakeLists.txt.user
 foo.txt
+.vscode
 
 *~
 *.autosave

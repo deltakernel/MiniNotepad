@@ -6,18 +6,19 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QStatusBar>
+#include <QMessageBox>
 
 class Notepad : public QMainWindow
 {
+    Q_OBJECT
 public:
-    Notepad();
+    Notepad(QMainWindow *parent = nullptr);
     ~Notepad();
-
-    void message_statusbar(QString fileName);
 
 private slots:
     void open();
     void save();
+    void message_status();
     void on_textEdit_changed();
 
 private:
@@ -26,9 +27,9 @@ private:
 
     bool isChanged;
 
-    QMenuBar *menuBar;
-    QMenu *fileMenu;
-    QAction *openAction;
-    QAction *saveAction;
+    QMenuBar   *menuBar;
+    QMenu      *fileMenu;
+    QAction    *openAction;
+    QAction    *saveAction;
     QStatusBar *status;
 };
