@@ -30,19 +30,52 @@ Notepad::Notepad(QMainWindow *parent)
 
 Notepad::~Notepad()
 {
+}
+
+void Notepad::closeEvent(QCloseEvent *event)
+{
     if (isChanged)
     {
         QString text = "";
-        if (file->fileName() != "")
+        if (!file->fileName().isEmpty())
         {
-            QString fileName = file->fileName();
-            text = "Do you want save changed text in " + fileName.left(fileName.lastIndexOf(QChar('\\')));
-            if (QMessageBox::Yes == QMessageBox::question(this, "", text))
-                save();
+            QFileInfo fileInfo(file->fileName());
+            text = "<h2>You want to save the changes in " + fileInfo.fileName() + "?</h2>";
         }
+        else
+        {
+            text = "<h2>You want to save the changes?</h2>";
+        }
+        
+        int resp = QMessageBox::question(this, "", text, QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+
+        switch (resp)
+        {
+        case QMessageBox::Yes:
+            save();
+            QMainWindow::closeEvent(event);
+            break;
+        case QMessageBox::No:
+            event->accept();
+            QMainWindow::closeEvent(event);
+            break;
+        case QMessageBox::Cancel:
+            event->ignore();
+            break;
+        default:
+            QMainWindow::closeEvent(event);
+            break;
+        }
+        
     }
-    close();
+ 
+    
 }
+
+// void Notepad::windowClosing()
+// {
+
+// }
 
 void Notepad::message_status()
 {
@@ -52,8 +85,6 @@ void Notepad::message_status()
         QFileInfo fileInfo(file->fileName());
         message = fileInfo.fileName();
     }
-    //QString word = (isChanged)? "*" : "";
-    //(isChanged)?  word="*" :  word="";
     status->showMessage(message + QString((isChanged)? "*" : ""));
 }
 
@@ -99,8 +130,14 @@ void Notepad::on_textEdit_changed()
     Notepad::message_status();
 }
 
+
 void Notepad::open()
 {
+    if(!textEdit->toPlainText().isEmpty() || isChanged) {
+        if(QMessageBox::Yes == QMessageBox::question(this, "", "<h2><div>Deseja Salvar as alterações</div><div>feitas no Documento</div></h2>")) {
+            save();
+        } 
+    } 
     QString fileName = QFileDialog::getOpenFileName(this, "Open Text File", "", "Text Files (*.txt);;All Files (*)");
     // Open file case chosse file in explorer end file not is current file.
     if (fileName != "" || file->fileName() != fileName)

@@ -7,6 +7,7 @@
 #include <QMainWindow>
 #include <QStatusBar>
 #include <QMessageBox>
+#include <QCloseEvent>
 
 class Notepad : public QMainWindow
 {
@@ -15,11 +16,18 @@ public:
     Notepad(QMainWindow *parent = nullptr);
     ~Notepad();
 
+protected:
+    void closeEvent(QCloseEvent *event) override;
+
+// signals:
+//     void windowClosing();
+
 private slots:
     void open();
     void save();
     void message_status();
     void on_textEdit_changed();
+    
 
 private:
     QTextEdit *textEdit;
